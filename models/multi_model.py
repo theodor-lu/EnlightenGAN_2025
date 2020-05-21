@@ -110,7 +110,7 @@ class MultiModel(BaseModel):
 
     def test(self):
         self.real_A = Variable(self.input_A, volatile=True)
-        # print(np.transpose(self.real_A.data[0].cpu().float().numpy(),(1,2,0))[:2][:2][:])
+        # print(np.transpose(self.real_A.item().cpu().float().numpy(),(1,2,0))[:2][:2][:])
         if self.opt.skip == 1:
             self.fake_B, self.latent_real_A = self.netG_A.forward(self.real_A)
         else:
@@ -126,7 +126,7 @@ class MultiModel(BaseModel):
 
     def predict(self):
         self.real_A = Variable(self.input_A, volatile=True)
-        # print(np.transpose(self.real_A.data[0].cpu().float().numpy(),(1,2,0))[:2][:2][:])
+        # print(np.transpose(self.real_A.item().cpu().float().numpy(),(1,2,0))[:2][:2][:])
         if self.opt.skip == 1:
             self.fake_B, self.latent_real_A = self.netG_A.forward(self.real_A)
         else:
@@ -262,16 +262,16 @@ class MultiModel(BaseModel):
 
 
     def get_current_errors(self):
-        D_A = self.loss_D_A.data[0]
-        G_A = self.loss_G_A.data[0]
-        L1 = (self.L1_AB + self.L1_BA).data[0]
-        Cyc_A = self.loss_cycle_A.data[0]
-        D_B = self.loss_D_B.data[0]
-        G_B = self.loss_G_B.data[0]
-        Cyc_B = self.loss_cycle_B.data[0]
-        vgg = (self.loss_vgg_a.data[0] + self.loss_vgg_b.data[0])/self.opt.vgg if self.opt.vgg > 0 else 0
+        D_A = self.loss_D_A.item()
+        G_A = self.loss_G_A.item()
+        L1 = (self.L1_AB + self.L1_BA).item()
+        Cyc_A = self.loss_cycle_A.item()
+        D_B = self.loss_D_B.item()
+        G_B = self.loss_G_B.item()
+        Cyc_B = self.loss_cycle_B.item()
+        vgg = (self.loss_vgg_a.item() + self.loss_vgg_b.item())/self.opt.vgg if self.opt.vgg > 0 else 0
         if self.opt.identity > 0:
-            idt = self.loss_idt_A.data[0] + self.loss_idt_B.data[0]
+            idt = self.loss_idt_A.item() + self.loss_idt_B.item()
             if self.opt.lambda_A > 0.0:
                 return OrderedDict([('D_A', D_A), ('G_A', G_A), ('L1', L1), ('Cyc_A', Cyc_A),
                                     ('D_B', D_B), ('G_B', G_B), ('Cyc_B', Cyc_B), ("vgg", vgg), ("idt", idt)])

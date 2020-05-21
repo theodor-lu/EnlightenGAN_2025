@@ -90,7 +90,6 @@ class UnalignedDataset(BaseDataset):
         # B_img = B_img.resize(B_size, Image.BICUBIC)
         # A_gray = A_img.convert('LA')
         # A_gray = 255.0-A_gray
-
         A_img = self.transform(A_img)
         B_img = self.transform(B_img)
 

@@ -6,6 +6,7 @@ from models.models import create_model
 from util.visualizer import Visualizer
 from pdb import set_trace as st
 from util import html
+import torch
 
 opt = TestOptions().parse()
 opt.nThreads = 1   # test code only supports nThreads = 1
@@ -22,11 +23,13 @@ web_dir = os.path.join("./ablation/", opt.name, '%s_%s' % (opt.phase, opt.which_
 webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.which_epoch))
 # test
 print(len(dataset))
-for i, data in enumerate(dataset):
-    model.set_input(data)
-    visuals = model.predict()
-    img_path = model.get_image_paths()
-    print('process image... %s' % img_path)
-    visualizer.save_images(webpage, visuals, img_path)
+
+with torch.no_grad():
+    for i, data in enumerate(dataset):
+        model.set_input(data)
+        visuals = model.predict()
+        img_path = model.get_image_paths()
+        print('process image... %s' % img_path)
+        visualizer.save_images(webpage, visuals, img_path)
 
 webpage.save()

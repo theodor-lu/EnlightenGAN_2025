@@ -226,14 +226,14 @@ class UNITModel(BaseModel):
         self.dis_opt.step()
 
     def get_current_errors(self):
-        D_A = self.loss_dis_a.data[0]
-        G_A = self.loss_gen_adv_a.data[0]
-        kl_A = self.loss_gen_recon_kl_a.data[0]
-        Cyc_A = self.loss_gen_cyc_x_a.data[0]
-        D_B = self.loss_dis_b.data[0]
-        G_B = self.loss_gen_adv_b.data[0]
-        kl_B = self.loss_gen_recon_kl_b.data[0]
-        Cyc_B = self.loss_gen_cyc_x_b.data[0]
+        D_A = self.loss_dis_a.item()
+        G_A = self.loss_gen_adv_a.item()
+        kl_A = self.loss_gen_recon_kl_a.item()
+        Cyc_A = self.loss_gen_cyc_x_a.item()
+        D_B = self.loss_dis_b.item()
+        G_B = self.loss_gen_adv_b.item()
+        kl_B = self.loss_gen_recon_kl_b.item()
+        Cyc_B = self.loss_gen_cyc_x_b.item()
         if self.config['vgg_w'] > 0:
             vgg_A = self.loss_gen_vgg_a
             vgg_B = self.loss_gen_vgg_b

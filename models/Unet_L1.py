@@ -135,8 +135,8 @@ class PairModel(BaseModel):
 
 
     def get_current_errors(self, epoch):
-        L1 = self.L1_AB.data[0]
-        loss_G = self.loss_G.data[0]
+        L1 = self.L1_AB.item()
+        loss_G = self.loss_G.item()
         return OrderedDict([('L1', L1), ('loss_G', loss_G)])
 
     def get_current_visuals(self):
