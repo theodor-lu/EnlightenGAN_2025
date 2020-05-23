@@ -4,12 +4,13 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--port", type=str, default="8097")
 parser.add_argument("--train", action='store_true')
+parser.add_argument("--object", default='car', help='Object specific GAN training')
 parser.add_argument("--predict", action='store_true')
 opt = parser.parse_args()
 
 if opt.train:
 	os.system("python train.py \
-		--dataroot /work/vq218944/MSAI/EnlightenGAN_Data \
+		--dataroot /work/zk315372/Pai/EnlightenGAN_Data \
 		--no_dropout \
 		--name enlightening \
 		--model single \
@@ -36,7 +37,8 @@ if opt.train:
         --vgg_choose relu5_1 \
 		--gpu_ids 0,1 \
 		--resize_or_crop resize_and_crop \
-		--display_port=" + opt.port)
+		--object {} \
+		--display_port={}".format(opt.object, opt.port))
 
 elif opt.predict:
 	for i in range(1):

@@ -57,20 +57,25 @@ class UnalignedDataset(BaseDataset):
     def initialize(self, opt):
         self.opt = opt
         self.root = opt.dataroot
+        self.dir_A = os.path.join(opt.dataroot, opt.phase + 'A')
+        self.dir_B = os.path.join(opt.dataroot, opt.phase + 'B')
 
 
-        if opt.object is not None:
-            self.dir_A = os.path.join(opt.dataroot, opt.phase + '_A', opt.object)
-            self.dir_B = os.path.join(opt.dataroot, opt.phase + '_B', opt.object)
-        else:
-            self.dir_A = os.path.join(opt.dataroot, opt.phase + '_A')
-            self.dir_B = os.path.join(opt.dataroot, opt.phase + '_B')            
-
+        self.subdirs_A = [ f.path for f in os.scandir(self.dir_A) if f.is_dir() ]
+        self.subdirs_B = [ f.path for f in os.scandir(self.dir_A) if f.is_dir() ]
 
         # self.A_paths = make_dataset(self.dir_A)
         # self.B_paths = make_dataset(self.dir_B)
-        self.A_imgs, self.A_paths = store_dataset(self.dir_A)
-        self.B_imgs, self.B_paths = store_dataset(self.dir_B)
+
+        assert len(self.subdirs_A) == len(self.subdirs_B)
+
+        self.object_dict = {
+        }
+
+        for subdir in self.subdirs_A:
+            subdir_A_imgs, subdir_A_paths = store_dataset(sub)
+            subdir_B_imgs, subdir_B_paths = store_dataset(self.dir_B)
+            self.object_dict[subdir] 
 
         # self.A_paths = sorted(self.A_paths)
         # self.B_paths = sorted(self.B_paths)
