@@ -80,6 +80,8 @@ class BaseOptions():
         self.parser.add_argument('--norm_attention', action='store_true', help='normalize attention map')
         self.parser.add_argument('--vary', type=int, default=1, help='use light data augmentation')
         self.parser.add_argument('--lighten', action='store_true', help='normalize attention map')
+        self.parser.add_argument('--object', default=None, help='Specific objects to load from training data subset.')
+
         self.initialized = True
 
     def parse(self):

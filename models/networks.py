@@ -982,6 +982,8 @@ class Vgg16(nn.Module):
         h = F.relu(conv4_3, inplace=True)
         relu4_3 = h
 
+
+
         if opt.vgg_choose != "no_maxpool":
             if opt.vgg_maxpooling:
                 h = F.max_pool2d(h, kernel_size=2, stride=2)
@@ -994,7 +996,7 @@ class Vgg16(nn.Module):
 
 
         if opt.vgg_choose == "stylefeat":
-            return (h_relu_1_2, h_relu_2_2, h_relu_3_3, h_relu_4_3)
+            return (relu1_2, relu2_2, relu3_3, relu4_3)      
 
         elif opt.vgg_choose == "conv4_3":
             return conv4_3
@@ -1026,6 +1028,15 @@ def vgg_preprocess(batch, opt):
         batch = batch.sub(Variable(mean)) # subtract mean
     return batch
 
+
+# Calculate Gram matrix (G = FF^T)
+def gram_matrix(x):
+    (bs, ch, h, w) = x.size()
+    f = x.view(bs, ch, w*h)
+    f_T = f.transpose(1, 2)
+    G = f.bmm(f_T) / (ch * h * w)
+    return G
+
 class PerceptualLoss(nn.Module):
     def __init__(self, opt):
         super(PerceptualLoss, self).__init__()
@@ -1037,6 +1048,21 @@ class PerceptualLoss(nn.Module):
         target_vgg = vgg_preprocess(target, self.opt)
         img_fea = vgg(img_vgg, self.opt)
         target_fea = vgg(target_vgg, self.opt)
+        print(len(img_fea))
+        if self.opt.vgg_choose == "stylefeat":
+            STYLE_WEIGHT = 1e5
+            CONTENT_WEIGHT = 1e0
+            content_loss = CONTENT_WEIGHT*torch.mean((self.instancenorm(img_fea[1]) - self.instancenorm(target_fea[1])) ** 2)
+            
+            img_gram = [gram_matrix(fmap) for fmap in img_fea]
+            target_gram = [gram_matrix(fmap) for fmap in target_fea]
+
+            style_loss = 0.0
+            for feature_idx in range(len(img_gram)):
+                style_loss += torch.mean((img_gram[feature_idx] - target_gram[feature_idx])**2)   
+
+            return CONTENT_WEIGHT*content_loss + STYLE_WEIGHT *style_loss
+
         if self.opt.no_vgg_instance:
             return torch.mean((img_fea - target_fea) ** 2)
         else:

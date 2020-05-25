@@ -57,8 +57,15 @@ class UnalignedDataset(BaseDataset):
     def initialize(self, opt):
         self.opt = opt
         self.root = opt.dataroot
-        self.dir_A = os.path.join(opt.dataroot, opt.phase + 'A')
-        self.dir_B = os.path.join(opt.dataroot, opt.phase + 'B')
+
+
+        if opt.object is not None:
+            self.dir_A = os.path.join(opt.dataroot, opt.phase + '_A', opt.object)
+            self.dir_B = os.path.join(opt.dataroot, opt.phase + '_B', opt.object)
+        else:
+            self.dir_A = os.path.join(opt.dataroot, opt.phase + '_A')
+            self.dir_B = os.path.join(opt.dataroot, opt.phase + '_B')            
+
 
         # self.A_paths = make_dataset(self.dir_A)
         # self.B_paths = make_dataset(self.dir_B)
