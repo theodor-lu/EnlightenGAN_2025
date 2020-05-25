@@ -5,6 +5,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--port", type=str, default="8097")
 parser.add_argument("--train", action='store_true')
 parser.add_argument("--predict", action='store_true')
+parser.add_argument("--name",  type=str, default="enlightening")
+
 opt = parser.parse_args()
 
 if opt.train:
@@ -33,7 +35,7 @@ if opt.train:
         --times_residual \
 		--instance_norm 0 \
 		--vgg 1 \
-        --vgg_choose relu5_1 \
+        --vgg_choose stylefeat \
 		--gpu_ids 0,1 \
 		--resize_or_crop resize_and_crop \
 		--display_port=" + opt.port)
@@ -42,7 +44,7 @@ elif opt.predict:
 	for i in range(1):
 	        os.system("python predict.py \
 	        	--dataroot /work/vq218944/MSAI/test_dataset \
-	        	--name enlightening \
+	        	--name {} \
 	        	--model single \
 	        	--which_direction AtoB \
 	        	--no_dropout \
@@ -54,4 +56,4 @@ elif opt.predict:
                 --self_attention \
                 --times_residual \
 	        	--instance_norm 0 --resize_or_crop='no'\
-	        	--which_epoch " + str(200 - i*5))
+	        	--which_epoch {}".format(opt.name, str(200 - i*5)))

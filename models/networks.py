@@ -930,6 +930,7 @@ class DnCNN(nn.Module):
                 init.constant_(m.weight, 1)
                 init.constant_(m.bias, 0)
 
+
 class Vgg16(nn.Module):
     def __init__(self):
         super(Vgg16, self).__init__()
@@ -952,20 +953,24 @@ class Vgg16(nn.Module):
         self.conv5_3 = nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1)
 
     def forward(self, X, opt):
+
         h = F.relu(self.conv1_1(X), inplace=True)
         h = F.relu(self.conv1_2(h), inplace=True)
-        # relu1_2 = h
+        relu1_2 = h
         h = F.max_pool2d(h, kernel_size=2, stride=2)
 
         h = F.relu(self.conv2_1(h), inplace=True)
         h = F.relu(self.conv2_2(h), inplace=True)
-        # relu2_2 = h
+        relu2_2 = h
         h = F.max_pool2d(h, kernel_size=2, stride=2)
 
         h = F.relu(self.conv3_1(h), inplace=True)
         h = F.relu(self.conv3_2(h), inplace=True)
         h = F.relu(self.conv3_3(h), inplace=True)
-        # relu3_3 = h
+        relu3_3 = h
+
+
+
         if opt.vgg_choose != "no_maxpool":
             h = F.max_pool2d(h, kernel_size=2, stride=2)
 
@@ -986,7 +991,12 @@ class Vgg16(nn.Module):
         conv5_3 = self.conv5_3(relu5_2) 
         h = F.relu(conv5_3, inplace=True)
         relu5_3 = h
-        if opt.vgg_choose == "conv4_3":
+
+
+        if opt.vgg_choose == "stylefeat":
+            return (h_relu_1_2, h_relu_2_2, h_relu_3_3, h_relu_4_3)
+
+        elif opt.vgg_choose == "conv4_3":
             return conv4_3
         elif opt.vgg_choose == "relu4_2":
             return relu4_2
