@@ -994,9 +994,8 @@ class Vgg16(nn.Module):
         h = F.relu(conv5_3, inplace=True)
         relu5_3 = h
 
-
         if opt.vgg_choose == "stylefeat":
-            return (relu1_2, relu2_2, relu3_3, relu4_3)      
+            return (relu5_3, relu3_3, relu4_3)      
 
         elif opt.vgg_choose == "conv4_3":
             return conv4_3
@@ -1048,12 +1047,10 @@ class PerceptualLoss(nn.Module):
         target_vgg = vgg_preprocess(target, self.opt)
         img_fea = vgg(img_vgg, self.opt)
         target_fea = vgg(target_vgg, self.opt)
-        print(len(img_fea))
         if self.opt.vgg_choose == "stylefeat":
-            STYLE_WEIGHT = 1e5
+            STYLE_WEIGHT = 1e-5
             CONTENT_WEIGHT = 1e0
             content_loss = CONTENT_WEIGHT*torch.mean((self.instancenorm(img_fea[1]) - self.instancenorm(target_fea[1])) ** 2)
-            
             img_gram = [gram_matrix(fmap) for fmap in img_fea]
             target_gram = [gram_matrix(fmap) for fmap in target_fea]
 
@@ -1061,6 +1058,7 @@ class PerceptualLoss(nn.Module):
             for feature_idx in range(len(img_gram)):
                 style_loss += torch.mean((img_gram[feature_idx] - target_gram[feature_idx])**2)   
 
+            style_loss /= len(img_gram)
             return CONTENT_WEIGHT*content_loss + STYLE_WEIGHT *style_loss
 
         if self.opt.no_vgg_instance:
