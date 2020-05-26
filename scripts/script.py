@@ -43,9 +43,10 @@ if opt.train:
 		--display_port={}".format(opt.object, opt.port))
 
 elif opt.predict:
-	for i in range(1):
+	for i in range(1, 2):
 	        os.system("python predict.py \
-	        	--dataroot /work/vq218944/MSAI/test_dataset \
+				--object {} \
+	        	--dataroot /work/vq218944/MSAI/EnlightenGAN_Data/\
 	        	--name {} \
 	        	--model single \
 	        	--which_direction AtoB \
@@ -58,4 +59,4 @@ elif opt.predict:
                 --self_attention \
                 --times_residual \
 	        	--instance_norm 0 --resize_or_crop='no'\
-	        	--which_epoch {}".format(opt.name, str(200 - i*5)))
+	        	--which_epoch {}".format(opt.object, opt.name, str(200 - i*5)))
