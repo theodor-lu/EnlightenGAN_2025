@@ -35,7 +35,7 @@ if opt.train:
 		--instance_norm 0 \
 		--vgg 1 \
         --vgg_choose stylefeat \
-		--gpu_ids 0,1 \
+		--gpu_ids 1 \
 		--resize_or_crop resize_and_crop \
 		--object {} \
 		--display_port={}".format(opt.object, opt.port))
