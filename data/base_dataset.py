@@ -15,7 +15,9 @@ class BaseDataset(data.Dataset):
 
 def get_transform(opt):
     transform_list = []
-
+    """
+    Fix transforms code for ExDark, resize_and_crop to be used now!
+    """
     if opt.resize_or_crop == 'resize_and_crop':
         zoom = 1 + 0.1*random.randint(0,4)
         osize = [int(400*zoom), int(600*zoom)]

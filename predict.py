@@ -10,7 +10,7 @@ import torch
 
 opt = TestOptions().parse()
 opt.nThreads = 1   # test code only supports nThreads = 1
-opt.batchSize = 1  # test code only supports batchSize = 1
+opt.batchSize = 1 # test code only supports batchSize = 1
 opt.serial_batches = True  # no shuffle
 opt.no_flip = True  # no flip
 

@@ -155,29 +155,17 @@ class SingleModel(BaseModel):
             self.real_A = self.real_A + self.noise
         if self.opt.input_linear:
             self.real_A = (self.real_A - torch.min(self.real_A))/(torch.max(self.real_A) - torch.min(self.real_A))
-        # print(np.transpose(self.real_A.item().cpu().float().numpy(),(1,2,0))[:2][:2][:])
         if self.opt.skip == 1:
             self.fake_B, self.latent_real_A = self.netG_A.forward(self.real_A, self.real_A_gray)
         else:
             self.fake_B = self.netG_A.forward(self.real_A, self.real_A_gray)
-        # self.rec_A = self.netG_B.forward(self.fake_B)
 
         real_A = util.tensor2im(self.real_A.data)
         fake_B = util.tensor2im(self.fake_B.data)
         A_gray = util.atten2im(self.real_A_gray.data)
-        # rec_A = util.tensor2im(self.rec_A.data)
-        # if self.opt.skip == 1:
-        #     latent_real_A = util.tensor2im(self.latent_real_A.data)
-        #     latent_show = util.latent2im(self.latent_real_A.data)
-        #     max_image = util.max2im(self.fake_B.data, self.latent_real_A.data)
-        #     return OrderedDict([('real_A', real_A), ('fake_B', fake_B), ('latent_real_A', latent_real_A),
-        #                     ('latent_show', latent_show), ('max_image', max_image), ('A_gray', A_gray)])
-        # else:
-        #     return OrderedDict([('real_A', real_A), ('fake_B', fake_B)])
-        # return OrderedDict([('fake_B', fake_B)])
+
         return OrderedDict([('real_A', real_A), ('fake_B', fake_B)])
 
-    # get image paths
     def get_image_paths(self):
         return self.image_paths
 
@@ -227,9 +215,7 @@ class SingleModel(BaseModel):
             self.loss_D_P = self.loss_D_P*2
         self.loss_D_P.backward()
 
-    # def backward_D_B(self):
-    #     fake_A = self.fake_A_pool.query(self.fake_A)
-    #     self.loss_D_B = self.backward_D_basic(self.netD_B, self.real_A, fake_A)
+
     def forward(self):
         self.real_A = Variable(self.input_A)
         self.real_B = Variable(self.input_B)
@@ -272,14 +258,6 @@ class SingleModel(BaseModel):
                 self.input_patch_1.append(self.real_A[:,:, h_offset_1:h_offset_1 + self.opt.patchSize,
                     w_offset_1:w_offset_1 + self.opt.patchSize])
 
-            # w_offset_2 = random.randint(0, max(0, w - self.opt.patchSize - 1))
-            # h_offset_2 = random.randint(0, max(0, h - self.opt.patchSize - 1))
-            # self.fake_patch_2 = self.fake_B[:,:, h_offset_2:h_offset_2 + self.opt.patchSize,
-            #        w_offset_2:w_offset_2 + self.opt.patchSize]
-            # self.real_patch_2 = self.real_B[:,:, h_offset_2:h_offset_2 + self.opt.patchSize,
-            #        w_offset_2:w_offset_2 + self.opt.patchSize]
-            # self.input_patch_2 = self.real_A[:,:, h_offset_2:h_offset_2 + self.opt.patchSize,
-            #        w_offset_2:w_offset_2 + self.opt.patchSize]
 
     def backward_G(self, epoch):
         pred_fake = self.netD_A.forward(self.fake_B)
@@ -369,26 +347,7 @@ class SingleModel(BaseModel):
         self.loss_G.backward()
 
 
-    # def optimize_parameters(self, epoch):
-    #     # forward
-    #     self.forward()
-    #     # G_A and G_B
-    #     self.optimizer_G.zero_grad()
-    #     self.backward_G(epoch)
-    #     self.optimizer_G.step()
-    #     # D_A
-    #     self.optimizer_D_A.zero_grad()
-    #     self.backward_D_A()
-    #     self.optimizer_D_A.step()
-    #     if self.opt.patchD:
-    #         self.forward()
-    #         self.optimizer_D_P.zero_grad()
-    #         self.backward_D_P()
-    #         self.optimizer_D_P.step()
-        # D_B
-        # self.optimizer_D_B.zero_grad()
-        # self.backward_D_B()
-        # self.optimizer_D_B.step()
+
     def optimize_parameters(self, epoch):
         # forward
         self.forward()

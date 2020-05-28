@@ -7,12 +7,14 @@ parser.add_argument("--train", action='store_true')
 parser.add_argument("--object", default='car', help='Object specific GAN training')
 parser.add_argument("--predict", action='store_true')
 parser.add_argument("--name",  type=str, default="enlightening")
+parser.add_argument("--suffix",  type=str, default="test_dataset1")
+parser.add_argument("--gpu_ids",  type=str, default="0,1")
 
 opt = parser.parse_args()
 
 if opt.train:
 	os.system("python train.py \
-		--dataroot /work/zk315372/Pai/EnlightenGAN_Data \
+		--dataroot /work/vq218944/MSAI/EnlightenGAN_Data \
 		--no_dropout \
 		--name enlightening \
 		--model single \
@@ -27,7 +29,7 @@ if opt.train:
 		--fineSize 256 \
         --patchSize 32 \
 		--skip 1 \
-		--batchSize 4 \
+		--batchSize 32 \
         --self_attention \
 		--use_norm 1 \
 		--use_wgan 0 \
@@ -37,7 +39,7 @@ if opt.train:
 		--instance_norm 0 \
 		--vgg 1 \
         --vgg_choose stylefeat \
-		--gpu_ids 1 \
+		--gpu_ids 0,1 \
 		--resize_or_crop resize_and_crop \
 		--object {} \
 		--display_port={}".format(opt.object, opt.port))
@@ -45,8 +47,7 @@ if opt.train:
 elif opt.predict:
 	for i in range(1, 2):
 	        os.system("python predict.py \
-				--object {} \
-	        	--dataroot /work/vq218944/MSAI/EnlightenGAN_Data/\
+	        	--dataroot /home/vq218944/Downloads/{} \
 	        	--name {} \
 	        	--model single \
 	        	--which_direction AtoB \
@@ -58,5 +59,6 @@ elif opt.predict:
 	        	--use_wgan 0 \
                 --self_attention \
                 --times_residual \
+				--gpu_ids {} \
 	        	--instance_norm 0 --resize_or_crop='no'\
-	        	--which_epoch {}".format(opt.object, opt.name, str(200 - i*5)))
+	        	--which_epoch latest".format(opt.suffix, opt.name, opt.gpu_ids))

@@ -105,7 +105,8 @@ def define_G(input_nc, output_nc, ngf, which_model_netG, norm='batch', use_dropo
         netG = DnCNN(opt, depth=17, n_channels=64, image_channels=1, use_bnorm=True, kernel_size=3)
     else:
         raise NotImplementedError('Generator model name [%s] is not recognized' % which_model_netG)
-    if len(gpu_ids) >= 0:
+    
+    if len(gpu_ids) >= 0 and torch.cuda.is_available():
         netG.cuda(device=gpu_ids[0])
         netG = torch.nn.DataParallel(netG, gpu_ids)
     netG.apply(weights_init)
@@ -120,6 +121,7 @@ def define_D(input_nc, ndf, which_model_netD,
 
     if use_gpu:
         assert(torch.cuda.is_available())
+        
     if which_model_netD == 'basic':
         netD = NLayerDiscriminator(input_nc, ndf, n_layers=3, norm_layer=norm_layer, use_sigmoid=use_sigmoid, gpu_ids=gpu_ids)
     elif which_model_netD == 'n_layers':
@@ -214,11 +216,15 @@ class DiscLossWGANGP():
     def calc_gradient_penalty(self, netD, real_data, fake_data):
         alpha = torch.rand(1, 1)
         alpha = alpha.expand(real_data.size())
-        alpha = alpha.cuda()
+
+      
 
         interpolates = alpha * real_data + ((1 - alpha) * fake_data)
 
-        interpolates = interpolates.cuda()
+        if torch.cuda.is_available():
+            alpha = alpha.cuda()
+            interpolates = interpolates.cuda()
+
         interpolates = Variable(interpolates, requires_grad=True)
         
         disc_interpolates = netD.forward(interpolates)
@@ -953,6 +959,9 @@ class Vgg16(nn.Module):
         self.conv5_3 = nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1)
 
     def forward(self, X, opt):
+        """
+        Updated forward pass code to incorporate multi-layer feature and style loss
+        """
 
         h = F.relu(self.conv1_1(X), inplace=True)
         h = F.relu(self.conv1_2(h), inplace=True)
@@ -1030,6 +1039,9 @@ def vgg_preprocess(batch, opt):
 
 # Calculate Gram matrix (G = FF^T)
 def gram_matrix(x):
+    """
+    Add gram matrix calculation form Perceptual Loss paper
+    """
     (bs, ch, h, w) = x.size()
     f = x.view(bs, ch, w*h)
     f_T = f.transpose(1, 2)
@@ -1043,6 +1055,9 @@ class PerceptualLoss(nn.Module):
         self.instancenorm = nn.InstanceNorm2d(512, affine=False)
 
     def compute_vgg_loss(self, vgg, img, target):
+        """
+        Add stylefeat loss which corresponds to style+ feature loss
+        """
         img_vgg = vgg_preprocess(img, self.opt)
         target_vgg = vgg_preprocess(target, self.opt)
         img_fea = vgg(img_vgg, self.opt)
@@ -1080,7 +1095,10 @@ def load_vgg16(model_dir, gpu_ids):
     #     torch.save(vgg.state_dict(), os.path.join(model_dir, 'vgg16.weight'))
     vgg = Vgg16()
     # vgg.cuda()
-    vgg.cuda(device=gpu_ids[0])
+
+    if torch.cuda.is_available():
+        vgg.cuda(device=gpu_ids[0])
+    
     vgg.load_state_dict(torch.load(os.path.join(model_dir, 'vgg16.weight')))
     vgg = torch.nn.DataParallel(vgg, gpu_ids)
     return vgg
@@ -1198,7 +1216,8 @@ class FCN32s(nn.Module):
 def load_fcn(model_dir):
     fcn = FCN32s()
     fcn.load_state_dict(torch.load(os.path.join(model_dir, 'fcn32s_from_caffe.pth')))
-    fcn.cuda()
+    if torch.cuda.is_available():
+        fcn.cuda()
     return fcn
 
 class SemanticLoss(nn.Module):

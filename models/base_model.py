@@ -2,6 +2,22 @@ import os
 import torch
 
 
+def convertModel(model_path, model):
+    if not(torch.cuda.is_available()):
+        checkpoint = torch.load(model_path,  map_location=torch.device('cpu'))
+        new_dict = {}
+        for key in checkpoint:
+            new_key = key.replace('module.', '')
+            new_dict[new_key] = checkpoint[key]
+        model.load_state_dict(new_dict)
+    else:
+        checkpoint = torch.load(model_path,  map_location=torch.device('cuda:0'))
+        model.load_state_dict(checkpoint)
+
+    print("Loaded Model: {} successfully".format(model_path))
+    return model
+
+
 class BaseModel():
     def name(self):
         return 'BaseModel'
@@ -50,7 +66,8 @@ class BaseModel():
     def load_network(self, network, network_label, epoch_label):
         save_filename = '%s_net_%s.pth' % (epoch_label, network_label)
         save_path = os.path.join(self.save_dir, save_filename)
-        network.load_state_dict(torch.load(save_path))
+        network = convertModel(save_path, network)
+        # network.load_state_dict(torch.load(save_path))
 
     def update_learning_rate():
         pass
