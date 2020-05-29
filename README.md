@@ -21,7 +21,7 @@ In this part of the README instructions on how the training data can be download
 
 ### Downloading the data for training
 The processed object-context paired data can be download from : https://drive.google.com/open?id=1ghNO6R8UNEoyWy9ugjEQ2pXgZbyVPe-y
-After completing the download, unzip the dataset and place it in a convenient location. 
+After completing the download, unzip the dataset and place it in a convenient location. The folder should have ```train_A, test_A, train_B, test_B``` subfolders.
 
 Details about how this data was processed and creating this processed data from scratch are described in the top-level README.md 
 
@@ -88,7 +88,7 @@ https://localhost:8097 can be visited to monitor the training process.
 To run only the image enhancement or test different pretrained models follow the section below,
 
 ### Downloading the pretrained models.
-Two options are provided to download the pretrained models used in this code. A bash script called ```download_models.sh``` is provided that automatically fetches the models and places them in the correct paths. If this is not possible due to OS constraints, please download the models from the gdrive link below: ( Please download the entire source folder.)
+Please download the models from the gdrive link below: ( Please download the entire source folder.)
 https://drive.google.com/open?id=1N4faPXW3OVfUnkSoQ2YLrGtut6aXMfq1
 
 Once the folder is unzipped, place its contents in a folder called ```checkpoints``` in this directory.
@@ -124,3 +124,25 @@ The ```<PATH>``` corresponds to the folder where images are contained in the ```
 
 Once the above command is run, the images will be processed and placed in ```ablation``` folder in this directory under the name of the checkpoint provided. 
 
+### CLAHE
+Evaluations using CLAHE are run with a custom implemented CLAHE runner from the OpenCV library. The code for this can be found under ```util/clahe.py```.
+
+## Code Walkthrough!
+The interesting part of the README!
+
+As mentioned in the report and earlier through the README, multiple loss types can be selected and object-context based pairing is incorporated which was absent in the original repo. 
+
+The newly integrated losses are incorporated by modifying ```models/networks.py```. Details about the modifications are as follows,
+1. The forward pass of the VGG network from line 961 onwards was modified to save feature vectors into tensors at different layers of the network. 
+2. The features to be considered for style based loss were added in the forward pass and the actual calculation of the loss was added in the ```compute_vgg_loss``` function in the PerceptualLoss class from line 1051 onwards. This was done by integrating and modifying code from https://github.com/ashwindcruz/perceptual-loss-style-transfer.
+
+The object-context pairing was integrated by modifying the ```data/unaligned_dataset.py``` to add object specific loading from the provided data_path. Using this new dataset caused the code to break at the tranforms module due to an error by the authors in the code with improper reshaping. This was fixed by changing the default tranforms in the ```data/base_dataset.py```
+
+Apart from these specific changes, multiple changes were made to ```options/base_options.py```, ```scripts/script.py``` during the experimentation process. 
+
+
+For a full log of changes made, git diff at this repo can be looked at: https://github.com/surajpaib/EnlightenGAN/commits/master
+
+Although these changes might seem minor in hindsight, they required a thourough understanding of the codebase and the original paper to ensure that naive changes that effect the performance adversely are not made. A lot of time was spent on understanding this codebase which was a very rewarding learning process.
+
+P.S. The codebase was also migrated from pytorch 0.4.0 to work with the latest version of pytorch. 
