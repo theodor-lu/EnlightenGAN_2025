@@ -9,12 +9,13 @@ parser.add_argument("--predict", action='store_true')
 parser.add_argument("--name",  type=str, default="enlightening")
 parser.add_argument("--suffix",  type=str, default="test_dataset1")
 parser.add_argument("--gpu_ids",  type=str, default="0,1")
+parser.add_argument("--data_path",  type=str, default="/home/vq218944/Downloads/EnlightenGAN_Data")
 
 opt = parser.parse_args()
 
 if opt.train:
 	os.system("python train.py \
-		--dataroot /work/vq218944/MSAI/EnlightenGAN_Data \
+		--dataroot {} \
 		--no_dropout \
 		--name enlightening \
 		--model single \
@@ -42,12 +43,12 @@ if opt.train:
 		--gpu_ids 0,1 \
 		--resize_or_crop resize_and_crop \
 		--object {} \
-		--display_port={}".format(opt.object, opt.port))
+		--display_port={}".format(opt.data_path, opt.object, opt.port))
 
 elif opt.predict:
 	for i in range(1, 2):
 	        os.system("python predict.py \
-	        	--dataroot /home/vq218944/Downloads/{} \
+	        	--dataroot {} \
 	        	--name {} \
 	        	--model single \
 	        	--which_direction AtoB \
@@ -61,4 +62,4 @@ elif opt.predict:
                 --times_residual \
 				--gpu_ids {} \
 	        	--instance_norm 0 --resize_or_crop='no'\
-	        	--which_epoch latest".format(opt.suffix, opt.name, opt.gpu_ids))
+	        	--which_epoch latest".format(opt.data_path, opt.name, opt.gpu_ids))
