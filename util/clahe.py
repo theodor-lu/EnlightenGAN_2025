@@ -27,7 +27,11 @@ def main(args):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
+
+    # Data folder provided in the similar test_A format
     parser.add_argument("--data_folder", help="Folder to data to run CLAHE on", default="/home/vq218944/Downloads/DICM/test_A")
+    # Output folder to save the processed images. It is saved under ablation with similar format as the enlightenGAN generated enhancements.
+    # This is done to allow easy integrating into the subsequent benchmarking process.
     parser.add_argument("--output_folder", help="Folder as the output", default="/home/vq218944/MSAI/Low-Light-Enhancement/EnlightenGAN/ablation/clahe/images")
     args = parser.parse_args()
     main(args)

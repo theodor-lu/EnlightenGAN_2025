@@ -1,5 +1,8 @@
 # EnlightenGAN
 
+EnlightenGAN is a highly effective unsupervised generative adversarial network that can be trained without low/normal-light image pairs, yet proves to generalize very well on various real-world test images. A series of innovations for the low-light image enhancement problem, including a global-local discriminator structure, a self-regularized perceptual loss fusion, and attention mechanism are used. 
+Paper: https://arxiv.org/abs/1906.06972
+
 Original README is saved as original_README.md. 
 
 Link to authors github repo: https://github.com/TAMU-VITA/EnlightenGAN
@@ -12,7 +15,7 @@ Link to modified github: https://github.com/surajpaib/EnlightenGAN
 ```
 pip install -r requirements.txt
 ```
-The code in this repository does not work without a GPU so please ensure that a GPU is present while running any of the code. Efforts were made to convert the code to be able to run on the CPU but most of the code writen by the authors is written with cuda runtime in mind so this turned out to be a difficult task.
+The code in this repository does not work without a GPU so please ensure that a GPU is present while running any of the code. Efforts were made to convert the code to be able to run on the CPU but most of the code writen by the authors is written with cuda runtime in mind so this turned out to be a difficult task and was abandoned in favor of investing time into other more important experiments.
 
 
 ## Training
@@ -84,15 +87,24 @@ https://localhost:8097 can be visited to monitor the training process.
 
 
 
+A small sample dataset is provided to test the training, to use this run,
+```
+python scripts/script.py --train --data_path SampleData/
+```
+
+Note: The batch size in ```scripts/script.py``` in line 33 has been set to 2 to allow testing on GPUs with smaller memory. The original batch size used was 32 across each GPU.
+
+
+
 ## Testing/Running the Enhancement
 To run only the image enhancement or test different pretrained models follow the section below,
 
 ### Downloading the pretrained models.
-Please download the models from the gdrive link below: ( Please download the entire source folder.)
+Please download the models from the gdrive link below: ( Please download the entire folder/ alternatively a sample model is provided with the code, skip the download and jump to Testing process section)
 https://drive.google.com/open?id=1N4faPXW3OVfUnkSoQ2YLrGtut6aXMfq1
 
 Once the folder is unzipped, place its contents in a folder called ```checkpoints``` in this directory.
-At the end of this process the ```checkpoints``` folder should have the following subfolder,
+At the end of this process the ```checkpoints``` folder should have the following subfolders,
 ```
 style_loss_car
 enlightening
@@ -105,7 +117,7 @@ Each of the above subfolders contains weight files needed to run the inference/e
 
 ### Testing process
 
-To run the prediction process, first create a folder in any location in this folder, create two subdirectories called
+To run the prediction process, first create a folder in any location. In this folder, create two subdirectories called
 ```
 test_A
 test_B
@@ -119,10 +131,14 @@ Once this is done run the script
 
 The ```<PATH>``` corresponds to the folder where images are contained in the ```test_A``` ```test_B``` format as shown above. The ```<CHECKPOINT_SUBFOLDER_NAME>``` is one of the subfolder names in the ```checkpoints``` folder as mentioned in the pretrained model download instructions. Note that, this needs to be just the name and not the path.
 
+For testing purposes, a small sample dataset along with adapted style checkpoint is provided, to use this:
+Run,
+
+```python scripts/script.py --predict --data_path SampleData --name final_style```
 
 ### Results
 
-Once the above command is run, the images will be processed and placed in ```ablation``` folder in this directory under the name of the checkpoint provided. 
+Once the above command is run, the images will be processed and placed in ```ablation``` folder in this directory under the name of the checkpoint provided. Run through the subdirectories to find a folder called images with all the enhanced images.
 
 ### CLAHE
 Evaluations using CLAHE are run with a custom implemented CLAHE runner from the OpenCV library. The code for this can be found under ```util/clahe.py```.
@@ -143,6 +159,6 @@ Apart from these specific changes, multiple changes were made to ```options/base
 
 For a full log of changes made, git diff at this repo can be looked at: https://github.com/surajpaib/EnlightenGAN/commits/master
 
-Although these changes might seem minor in hindsight, they required a thourough understanding of the codebase and the original paper to ensure that naive changes that effect the performance adversely are not made. A lot of time was spent on understanding this codebase which was a very rewarding learning process.
+Although these changes might seem minor in hindsight, they required a thourough understanding of the codebase and the original paper to ensure that naive changes that effect the performance adversely are not made. A lot of time was spent on understanding this codebase which was a very rewarding learning process indeed.
 
 P.S. The codebase was also migrated from pytorch 0.4.0 to work with the latest version of pytorch. 

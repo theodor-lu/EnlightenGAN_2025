@@ -30,7 +30,7 @@ if opt.train:
 		--fineSize 256 \
         --patchSize 32 \
 		--skip 1 \
-		--batchSize 32 \
+		--batchSize 2 \
         --self_attention \
 		--use_norm 1 \
 		--use_wgan 0 \
@@ -40,7 +40,7 @@ if opt.train:
 		--instance_norm 0 \
 		--vgg 1 \
         --vgg_choose {} \
-		--gpu_ids 0,1 \
+		--gpu_ids 0 \
 		--resize_or_crop resize_and_crop \
 		--object {} \
 		--display_port={}".format(opt.data_path, opt.name, opt.loss_type, opt.object, opt.port))
