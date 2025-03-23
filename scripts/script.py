@@ -4,12 +4,12 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--port", type=str, default="8097")
 parser.add_argument("--train", action='store_true')
-parser.add_argument("--object", default='car', help='Mention object for Object specific GAN training')
+parser.add_argument("--object", default='None', help='Mention object for Object specific GAN training')
 parser.add_argument("--predict", action='store_true')
 parser.add_argument("--name",  type=str, default="enlightening", help="For training, the name of the directory where checkpoints are created, for testing directory from which it is loaded")
 parser.add_argument("--gpu_ids",  type=str, default="0", help="GPU ids to use, to use 2 GPUs set to 0,1")
-parser.add_argument("--data_path",  type=str, default="/home/vq218944/Downloads/EnlightenGAN_Data", help="Path to the downloaded dataset")
-parser.add_argument("--loss_type",  type=str, default="stylefeat", help="Choose between relu5_1 | relu5_3 | stylefeat")
+parser.add_argument("--data_path",  type=str, default="datasets", help="Path to the downloaded dataset")
+parser.add_argument("--loss_type",  type=str, default="relu5_3", help="Choose between relu5_1 | relu5_3 | stylefeat")
 
 opt = parser.parse_args()
 
@@ -30,7 +30,7 @@ if opt.train:
 		--fineSize 256 \
         --patchSize 32 \
 		--skip 1 \
-		--batchSize 2 \
+		--batchSize 8 \
         --self_attention \
 		--use_norm 1 \
 		--use_wgan 0 \

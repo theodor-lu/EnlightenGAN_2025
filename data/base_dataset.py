@@ -21,7 +21,7 @@ def get_transform(opt):
     if opt.resize_or_crop == 'resize_and_crop':
         zoom = 1 + 0.1*random.randint(0,4)
         osize = [int(400*zoom), int(600*zoom)]
-        transform_list.append(transforms.Scale(osize, Image.BICUBIC))
+        transform_list.append(transforms.Resize(osize, Image.BICUBIC))
         transform_list.append(transforms.RandomCrop(opt.fineSize))
     elif opt.resize_or_crop == 'crop':
         transform_list.append(transforms.RandomCrop(opt.fineSize))
@@ -34,7 +34,7 @@ def get_transform(opt):
         transform_list.append(transforms.RandomCrop(opt.fineSize))  
     # elif opt.resize_or_crop == 'no':
     #     osize = [384, 512]
-    #     transform_list.append(transforms.Scale(osize, Image.BICUBIC))
+    #     transform_list.append(transforms.Resize(osize, Image.BICUBIC))
 
     if opt.isTrain and not opt.no_flip:
         transform_list.append(transforms.RandomHorizontalFlip())

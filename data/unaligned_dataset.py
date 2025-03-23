@@ -62,7 +62,7 @@ class UnalignedDataset(BaseDataset):
         Added object based loading
 
         """
-        if opt.object is not None:
+        if opt.object != 'None':
             self.dir_A = os.path.join(opt.dataroot, opt.phase + '_A', opt.object)
             self.dir_B = os.path.join(opt.dataroot, opt.phase + '_B', opt.object)
         else:
