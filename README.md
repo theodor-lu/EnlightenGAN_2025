@@ -4,27 +4,20 @@
 [[Paper]](https://arxiv.org/abs/1906.06972) [[Supplementary Materials]](https://yifanjiang.net/files/EnlightenGAN_Supplementary.pdf)
 
 
-### Representitive Results
-![representive_results](/assets/show_3.png)
-
-### Overal Architecture
-![architecture](/assets/arch.png)
 
 ## Environment Preparing
 ```
 python3.5
 ```
-You should prepare at least 3 1080ti gpus or change the batch size. 
+You should prepare at least 8 gb vram gpu or change the batch size. 
 
 
-```pip install -r requirement.txt``` </br>
-```mkdir model``` </br>
-Download VGG pretrained model from [[Google Drive 1]](https://drive.google.com/file/d/1IfCeihmPqGWJ0KHmH-mTMi_pn3z3Zo-P/view?usp=sharing), and then put it into the directory `model`.
+
 
 ### Training process
 Before starting training process, you should launch the `visdom.server` for visualizing.
 
-```nohup python -m visdom.server -port=8097```
+```python -m visdom.server -port=8097```
 
 then run the following command
 
